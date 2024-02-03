@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse String App</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            document.getElementById('text').oninput = function(event){
+                let text = document.getElementById('text').value;
+                fetch('/html_endpoint', {
+                    method: 'POST',
+                    body: JSON.stringify({text: text}),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let resultList = document.getElementById('result');
+                    resultList.innerHTML = '';  // Clear previous results
+                    data.analyzed_text.forEach(function(innerList){
+                        let ul = document.createElement('ul'); // Create an inner list (ul) for each inner list
+                        innerList.forEach(function(item){
+                            let li = document.createElement('li');
+                            li.textContent = item;
+                            ul.appendChild(li);  // Append each item as a new line (list item) to the inner list (ul)
+                        });
+                        resultList.appendChild(ul); // Append the inner list (ul) to the main list (resultList)
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            };
+        });
+    </script>
+</head>
+<body>
+    <input type="text" id="text" placeholder="Enter text" required>
+    <div id="result"></div>  <!-- Change this to a div to contain multiple lists -->
+</body>
+</html>
